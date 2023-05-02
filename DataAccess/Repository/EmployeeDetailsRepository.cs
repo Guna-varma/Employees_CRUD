@@ -1,4 +1,5 @@
-﻿using Emp.DataAccess.Repository.IRepository;
+﻿using Emp.DataAccess.Data;
+using Emp.DataAccess.Repository.IRepository;
 using Emp.Model.Models;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,9 @@ namespace Emp.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(EmployeeDetails category)
+        public void Update(EmployeeDetails employeeDetails)
         {
-            _db.employeeDetailsList.Update(category);
+            _db.employeeDetailsList.Update(employeeDetails);
         }
 
     }

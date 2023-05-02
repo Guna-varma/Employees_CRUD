@@ -2,23 +2,24 @@
 using Emp.Model.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Employees.Controllers
+namespace Employees.Areas.Employees.Controllers
 {
-    public class EmployeeDetailsController : Controller
+    [Area("Employees")]
+    public class DepartmentController : Controller
     {
 
         private readonly IUnitOfWork repo;
 
-        public EmployeeDetailsController(IUnitOfWork empRepo)
+        public DepartmentController(IUnitOfWork deptRepo)
         {
-            repo = empRepo;
+            repo = deptRepo;
         }
 
         public IActionResult Index()
         {
-            List<EmployeeDetails> categories = repo.employeeDetails.GetAll().ToList();
+            List<Department> departments = repo.department.GetAll().ToList();
 
-            return View(categories);
+            return View(departments);
         }
 
         public IActionResult Create()
@@ -27,18 +28,17 @@ namespace Employees.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(EmployeeDetails EmployeeDetails)
+        public IActionResult Create(Department Department)
         {
 
             if (ModelState.IsValid) //validations
             {
-                repo.employeeDetails.Add(EmployeeDetails); // add EmployeeDetails 
+                repo.department.Add(Department); // add Department 
                 repo.Save(); //save
-                TempData["success"] = "EmployeeDetails Created Successfully!";
+                TempData["success"] = "Department Created Successfully!";
                 return RedirectToAction("Index"); // add the data into db
             }
             return View();
-
         }
 
         public IActionResult Edit(int? id)
@@ -47,22 +47,22 @@ namespace Employees.Controllers
             {
                 return NotFound("No Id is found");
             }
-            EmployeeDetails EmployeeDetailsFromDb = repo.employeeDetails.Get(u => u.Id == id);
-            if (EmployeeDetailsFromDb == null)
+            Department DepartmentFromDb = repo.department.Get(u => u.Id == id);
+            if (DepartmentFromDb == null)
             {
                 return NotFound("id: " + id + ", is not found!");
             }
-            return View(EmployeeDetailsFromDb);
+            return View(DepartmentFromDb);
         }
 
         [HttpPost]
-        public IActionResult Edit(EmployeeDetails EmployeeDetails)
+        public IActionResult Edit(Department Department)
         {
             if (ModelState.IsValid) //validations
             {
-                repo.employeeDetails.Update(EmployeeDetails);// add EmployeeDetails 
+                repo.department.Update(Department);// add Department 
                 repo.Save(); //save
-                TempData["success"] = "EmployeeDetails Updated Successfully!";
+                TempData["success"] = "Department Updated Successfully!";
 
                 return RedirectToAction("Index"); // add the data into db
             }
@@ -75,25 +75,25 @@ namespace Employees.Controllers
             {
                 return NotFound("No Id is found");
             }
-            EmployeeDetails EmployeeDetailsFromDb = repo.employeeDetails.Get(u => u.Id == id);
-            if (EmployeeDetailsFromDb == null)
+            Department DepartmentFromDb = repo.department.Get(u => u.Id == id);
+            if (DepartmentFromDb == null)
             {
                 return NotFound("id: " + id + ", is not found!");
             }
-            return View(EmployeeDetailsFromDb);
+            return View(DepartmentFromDb);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int? id)
         {
-            EmployeeDetails? obj = repo.employeeDetails.Get(u => u.Id == id);
+            Department? obj = repo.department.Get(u => u.Id == id);
             if (obj == null)
             {
                 return NotFound("Id:" + id + ", is not Found");
             }
-            repo.employeeDetails.Remove(obj);
+            repo.department.Remove(obj);
             repo.Save();  //save
-            TempData["success"] = "EmployeeDetails Deleted Successfully!";
+            TempData["success"] = "Department Deleted Successfully!";
 
             return RedirectToAction("Index");
         }

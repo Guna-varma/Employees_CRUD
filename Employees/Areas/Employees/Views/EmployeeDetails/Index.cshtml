@@ -22,7 +22,6 @@
                     <i class="bi bi-plus-circle"></i>  New Employee
                 </a>
             </div>
-
         </div>
 
         <table class="table table-bordered table-striped">
@@ -37,7 +36,10 @@
                     <th>
                         Employee Code
                     </th>
-                    <th></th>
+                    <th>
+                        Department
+                    </th>
+                    @*<th> </th>*@
                 </tr>
             </thead>
             <tbody>
@@ -47,6 +49,7 @@
                         <td>@obj.FirstName</td>
                         <td>@obj.LastName</td>
                         <td>@obj.EmployeeCode</td>
+                        <td>@obj.Department.DepartmentName</td>
                         <td>
                             <div class="w-75 btn-group" role="group">
                                 <a asp-controller="EmployeeDetails" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">

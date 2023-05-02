@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ namespace Emp.Model.Models
     public class EmployeeDetails
     {
         [Key]
+        [DisplayName("Id")]
         public int Id { get; set; }
 
         [Required]
@@ -26,5 +29,13 @@ namespace Emp.Model.Models
         [Required]
         [DisplayName("Employee Code")]
         public string EmployeeCode { get; set; }
+
+        [Required]
+        public int DepartmentId { get; set; }
+
+
+        [ForeignKey("DepartmentId")]
+        [ValidateNever]
+        public Department Department { get; set; }
     }
 }

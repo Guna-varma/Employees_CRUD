@@ -1,7 +1,7 @@
 using Emp.DataAccess.Repository.IRepository;
 using Emp.DataAccess.Repository;
-using Emp.Model.Models;
 using Microsoft.EntityFrameworkCore;
+using Emp.DataAccess.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +31,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

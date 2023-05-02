@@ -1,4 +1,5 @@
-﻿using Emp.DataAccess.Repository.IRepository;
+﻿using Emp.DataAccess.Data;
+using Emp.DataAccess.Repository.IRepository;
 using Emp.Model.Models;
 using System;
 using System.Collections.Generic;

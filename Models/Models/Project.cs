@@ -23,5 +23,7 @@ namespace Emp.Model.Models
         [DisplayName("Project Lead")]
         public string ProjectLead { get; set; }
 
+        public List<DeptProject> DeptProjects { get; set; }
+
     }
 }

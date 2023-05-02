@@ -1,6 +1,6 @@
 ﻿
+using Emp.DataAccess.Data;
 using Emp.DataAccess.Repository.IRepository;
-using Emp.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,24 +13,21 @@ namespace Emp.DataAccess.Repository
     {
         public ApplicationDbContext _db;
 
-        public IDepartmentRepository Category { get; set; }
-        public IProjectRepository Product { get; set; }
-
-        public IBankDetailsRepository bankDetails => throw new NotImplementedException();
-
-        public IProjectRepository project => throw new NotImplementedException();
-
-        public IEmployeeDetailsRepository employeeDetails => throw new NotImplementedException();
-
-        public IDepartmentRepository department => throw new NotImplementedException();
-
+        public IDepartmentRepository department { get; set; }
+        public IProjectRepository project { get; set; }
+        public IEmployeeDetailsRepository employeeDetails { get; set; }
+        public IBankDetailsRepository bankDetails { get; set; }
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
 
-            Category = new EmployeeDetailsRepository(_db);
+            employeeDetails = new EmployeeDetailsRepository(_db);
 
-            Product = new DepartmentRepository(_db);
+            department = new DepartmentRepository(_db);
+
+            bankDetails = new BankDetailsRepository(_db);
+
+            project = new ProjectRepository(_db);
         }
 
         public void Save()

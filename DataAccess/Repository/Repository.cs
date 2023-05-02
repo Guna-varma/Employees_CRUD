@@ -4,8 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Emp.DataAccess.Data;
 using Emp.DataAccess.Repository.IRepository;
-using Emp.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Emp.DataAccess.Repository
@@ -20,6 +20,7 @@ namespace Emp.DataAccess.Repository
             _db = db;
             this.dbSet  = _db.Set<T>();
             //_db.Category == dbSet
+            //_db.employeeDetailsList.Include(u => u.Department).Include(u=>u.DepartmentId);
 
         }
 
@@ -28,16 +29,34 @@ namespace Emp.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
             query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var property in includeProperties.
+                    Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+
+                }
+            }
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+            if(!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach(var property in includeProperties.
+                    Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries )) 
+                { 
+                    query = query.Include(property);
+
+                }
+            }
             return query.ToList();
         }
 
