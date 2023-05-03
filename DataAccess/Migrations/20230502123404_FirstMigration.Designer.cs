@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Emp.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230502070036_FirstMigration")]
+    [Migration("20230502123404_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -36,12 +36,17 @@ namespace Emp.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("IFSCCode")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("bankDetailsList");
 
@@ -51,28 +56,8 @@ namespace Emp.DataAccess.Migrations
                             Id = 1,
                             AccountNo = "1234567890",
                             Branch = "HYD",
+                            EmployeeId = 1,
                             IFSCCode = "SBIN0000967"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccountNo = "9876544323",
-                            Branch = "DEL",
-                            IFSCCode = "KKBK0987633"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AccountNo = "0987654321",
-                            Branch = "RPR",
-                            IFSCCode = "KKBK09889455"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AccountNo = "5678901234",
-                            Branch = "TDD",
-                            IFSCCode = "HDFC90889455"
                         });
                 });
 
@@ -100,7 +85,7 @@ namespace Emp.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            DepartmentName = "DIgital",
+                            DepartmentName = "Digital",
                             Location = "Gurgaon"
                         });
                 });
@@ -172,6 +157,17 @@ namespace Emp.DataAccess.Migrations
                             ProjectLead = "Shiva",
                             projectName = "xNet"
                         });
+                });
+
+            modelBuilder.Entity("Emp.Model.Models.BankDetails", b =>
+                {
+                    b.HasOne("Emp.Model.Models.EmployeeDetails", "employeeDetails")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("employeeDetails");
                 });
 
             modelBuilder.Entity("Emp.Model.Models.EmployeeDetails", b =>

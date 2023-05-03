@@ -33,12 +33,17 @@ namespace Emp.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("IFSCCode")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("bankDetailsList");
 
@@ -48,28 +53,8 @@ namespace Emp.DataAccess.Migrations
                             Id = 1,
                             AccountNo = "1234567890",
                             Branch = "HYD",
+                            EmployeeId = 1,
                             IFSCCode = "SBIN0000967"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccountNo = "9876544323",
-                            Branch = "DEL",
-                            IFSCCode = "KKBK0987633"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AccountNo = "0987654321",
-                            Branch = "RPR",
-                            IFSCCode = "KKBK09889455"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AccountNo = "5678901234",
-                            Branch = "TDD",
-                            IFSCCode = "HDFC90889455"
                         });
                 });
 
@@ -97,24 +82,9 @@ namespace Emp.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            DepartmentName = "DIgital",
+                            DepartmentName = "Digital",
                             Location = "Gurgaon"
                         });
-                });
-
-            modelBuilder.Entity("Emp.Model.Models.DeptProject", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProjectId", "DepartmentId");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("DeptProject");
                 });
 
             modelBuilder.Entity("Emp.Model.Models.EmployeeDetails", b =>
@@ -186,23 +156,15 @@ namespace Emp.DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Emp.Model.Models.DeptProject", b =>
+            modelBuilder.Entity("Emp.Model.Models.BankDetails", b =>
                 {
-                    b.HasOne("Emp.Model.Models.Department", "Department")
-                        .WithMany("DeptProjects")
-                        .HasForeignKey("DepartmentId")
+                    b.HasOne("Emp.Model.Models.EmployeeDetails", "employeeDetails")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Emp.Model.Models.Project", "Project")
-                        .WithMany("DeptProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Project");
+                    b.Navigation("employeeDetails");
                 });
 
             modelBuilder.Entity("Emp.Model.Models.EmployeeDetails", b =>
@@ -214,16 +176,6 @@ namespace Emp.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("Emp.Model.Models.Department", b =>
-                {
-                    b.Navigation("DeptProjects");
-                });
-
-            modelBuilder.Entity("Emp.Model.Models.Project", b =>
-                {
-                    b.Navigation("DeptProjects");
                 });
 #pragma warning restore 612, 618
         }

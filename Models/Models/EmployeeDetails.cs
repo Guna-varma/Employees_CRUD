@@ -33,9 +33,11 @@ namespace Emp.Model.Models
         [Required]
         public int DepartmentId { get; set; }
 
-
         [ForeignKey("DepartmentId")]
         [ValidateNever]
         public Department Department { get; set; }
+
+        //public List<EmployeeProject> EmployeeProjects { get; set; }
+
     }
 }

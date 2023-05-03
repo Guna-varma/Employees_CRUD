@@ -1,4 +1,4 @@
-﻿@model BankDetails
+﻿@model Emp.Model.ViewModels.BankDetailsVM
 
 <div class="card box-shadow border-0 mt-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
@@ -20,21 +20,29 @@
                 @*<div asp-validation-summary="All"></div>*@
 
                 <div class="form-floating py-2 col-12">
-                    <input asp-for="AccountNo" class="form-control border-0 shadow" />
-                    <label asp-for="AccountNo" class="ms-2"></label>
-                    <span asp-validation-for="AccountNo" class="text-danger"></span>
+                    <input asp-for="BankDetails.AccountNo" class="form-control border-0 shadow" />
+                    <label asp-for="BankDetails.AccountNo" class="ms-2"></label>
+                    <span asp-validation-for="BankDetails.AccountNo" class="text-danger"></span>
                 </div>
 
                 <div class="form-floating py-2 col-12">
-                    <input asp-for="IFSCCode" class="form-control border-0 shadow" />
-                    <label asp-for="IFSCCode" class="ms-2"></label>
-                    <span asp-validation-for="IFSCCode" class="text-danger"></span>
+                    <input asp-for="BankDetails.IFSCCode" class="form-control border-0 shadow" />
+                    <label asp-for="BankDetails.IFSCCode" class="ms-2"></label>
+                    <span asp-validation-for="BankDetails.IFSCCode" class="text-danger"></span>
                 </div>
 
                 <div class="form-floating py-2 col-12">
-                    <input asp-for="Branch" class="form-control border-0 shadow" />
-                    <label asp-for="Branch" class="ms-2"></label>
-                    <span asp-validation-for="Branch" class="text-danger"></span>
+                    <input asp-for="BankDetails.Branch" class="form-control border-0 shadow" />
+                    <label asp-for="BankDetails.Branch" class="ms-2"></label>
+                    <span asp-validation-for="BankDetails.Branch" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-2 col-12">
+                    <select asp-for="@Model.BankDetails.EmployeeId" asp-items="@Model.EmpList" class="form-select border-0 shadow">
+                        <option disabled selected>--select Employee--</option>
+                    </select>
+                    <label asp-for="BankDetails.EmployeeId" class="ms-2"></label>
+                    <span asp-validation-for="BankDetails.EmployeeId" class="text-danger"></span>
                 </div>
 
                 @*<div class="mb-3 row p-1">

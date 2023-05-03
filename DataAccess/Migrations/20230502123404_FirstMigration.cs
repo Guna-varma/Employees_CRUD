@@ -3,8 +3,6 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Emp.DataAccess.Migrations
 {
     /// <inheritdoc />
@@ -14,22 +12,6 @@ namespace Emp.DataAccess.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "bankDetailsList",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    AccountNo = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
-                    IFSCCode = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
-                    Branch = table.Column<string>(type: "longtext", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_bankDetailsList", x => x.Id);
-                })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -85,21 +67,33 @@ namespace Emp.DataAccess.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
-            migrationBuilder.InsertData(
-                table: "bankDetailsList",
-                columns: new[] { "Id", "AccountNo", "Branch", "IFSCCode" },
-                values: new object[,]
+            migrationBuilder.CreateTable(
+                name: "bankDetailsList",
+                columns: table => new
                 {
-                    { 1, "1234567890", "HYD", "SBIN0000967" },
-                    { 2, "9876544323", "DEL", "KKBK0987633" },
-                    { 3, "0987654321", "RPR", "KKBK09889455" },
-                    { 4, "5678901234", "TDD", "HDFC90889455" }
-                });
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    AccountNo = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
+                    IFSCCode = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
+                    Branch = table.Column<string>(type: "longtext", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_bankDetailsList", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_bankDetailsList_employeeDetailsList_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "employeeDetailsList",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.InsertData(
                 table: "departmentList",
                 columns: new[] { "Id", "DepartmentName", "Location" },
-                values: new object[] { 1, "DIgital", "Gurgaon" });
+                values: new object[] { 1, "Digital", "Gurgaon" });
 
             migrationBuilder.InsertData(
                 table: "projectsList",
@@ -110,6 +104,16 @@ namespace Emp.DataAccess.Migrations
                 table: "employeeDetailsList",
                 columns: new[] { "Id", "DepartmentId", "EmployeeCode", "FirstName", "LastName" },
                 values: new object[] { 1, 1, "22060023", "Guna", "Varma" });
+
+            migrationBuilder.InsertData(
+                table: "bankDetailsList",
+                columns: new[] { "Id", "AccountNo", "Branch", "EmployeeId", "IFSCCode" },
+                values: new object[] { 1, "1234567890", "HYD", 1, "SBIN0000967" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_bankDetailsList_EmployeeId",
+                table: "bankDetailsList",
+                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_employeeDetailsList_DepartmentId",
@@ -124,10 +128,10 @@ namespace Emp.DataAccess.Migrations
                 name: "bankDetailsList");
 
             migrationBuilder.DropTable(
-                name: "employeeDetailsList");
+                name: "projectsList");
 
             migrationBuilder.DropTable(
-                name: "projectsList");
+                name: "employeeDetailsList");
 
             migrationBuilder.DropTable(
                 name: "departmentList");

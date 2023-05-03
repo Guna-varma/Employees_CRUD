@@ -1,6 +1,8 @@
 ﻿using Emp.DataAccess.Repository.IRepository;
 using Emp.Model.Models;
+using Emp.Model.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Employees.Areas.Employees.Controllers
 {
@@ -17,56 +19,81 @@ namespace Employees.Areas.Employees.Controllers
 
         public IActionResult Index()
         {
-            List<BankDetails> bankDetails = repo.bankDetails.GetAll().ToList();
+            List<BankDetails> bankDetails = repo.bankDetails.GetAll(includeProperties: "EmployeeDetails").ToList();
 
             return View(bankDetails);
         }
 
         public IActionResult Create()
         {
-            return View();
+            BankDetailsVM bankVM = new()
+            {
+                EmpList = repo.employeeDetails.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.EmployeeCode,
+                    Value = u.Id.ToString()
+                }),
+                BankDetails = new BankDetails()
+            };
+            return View(bankVM);
         }
 
         [HttpPost]
-        public IActionResult Create(BankDetails BankDetails)
+        public IActionResult Create(BankDetailsVM bankVM)
         {
-
             if (ModelState.IsValid) //validations
             {
-                repo.bankDetails.Add(BankDetails); // add BankDetails 
+                repo.bankDetails.Add(bankVM.BankDetails); // add emp 
                 repo.Save(); //save
-                TempData["success"] = "BankDetails Created Successfully!";
+                TempData["success"] = "Product Created Successfully!";
                 return RedirectToAction("Index"); // add the data into db
             }
-            return View();
+            else
+            {
+                bankVM.EmpList = repo.employeeDetails.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.EmployeeCode,
+                    Value = u.Id.ToString()
+                });
+                return View(bankVM);
+            }
         }
 
         public IActionResult Edit(int? id)
         {
-            if (id == null | id <= 0)
+            BankDetailsVM bankEditVM = new()
             {
-                return NotFound("No Id is found");
-            }
-            BankDetails BankDetailsFromDb = repo.bankDetails.Get(u => u.Id == id);
-            if (BankDetailsFromDb == null)
-            {
-                return NotFound("id: " + id + ", is not found!");
-            }
-            return View(BankDetailsFromDb);
+                EmpList = repo.employeeDetails.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.EmployeeCode,
+                    Value = u.Id.ToString()
+                }),
+                BankDetails = new BankDetails()
+            };
+
+            bankEditVM.BankDetails = repo.bankDetails.Get(u => u.Id == id);
+            return View(bankEditVM);
         }
 
         [HttpPost]
-        public IActionResult Edit(BankDetails BankDetails)
+        public IActionResult Edit(BankDetailsVM bankEditVM)
         {
             if (ModelState.IsValid) //validations
             {
-                repo.bankDetails.Update(BankDetails);// add BankDetails 
+                repo.bankDetails.Update(bankEditVM.BankDetails); // edit Employee 
                 repo.Save(); //save
-                TempData["success"] = "BankDetails Updated Successfully!";
-
+                TempData["success"] = "Product Updated Successfully!";
                 return RedirectToAction("Index"); // add the data into db
             }
-            return View();
+            else
+            {
+                bankEditVM.EmpList = repo.employeeDetails.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.EmployeeCode,
+                    Value = u.Id.ToString()
+                });
+                return View(bankEditVM);
+            }
         }
 
         public IActionResult Delete(int? id)

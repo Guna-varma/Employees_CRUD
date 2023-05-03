@@ -23,7 +23,5 @@ namespace Emp.Model.Models
         [DisplayName("Location")]
         public string Location { get; set; }
 
-        public List<DeptProject> DeptProjects { get; set; }
-
     }
 }
