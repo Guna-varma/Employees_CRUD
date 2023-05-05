@@ -1,19 +1,26 @@
 ﻿using Emp.Model.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace Emp.DataAccess.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<EmployeeDetails> employeeDetailsList { get; set; }
         public DbSet<BankDetails> bankDetailsList { get; set; }
         public DbSet<Project> projectsList { get; set; }
         public DbSet<Department> departmentList { get; set; }
 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<BankDetails>().HasData(
                 new BankDetails { Id = 1, AccountNo = "1234567890", Branch = "HYD", IFSCCode = "SBIN0000967", EmployeeId=1 }
                 );
@@ -23,7 +30,7 @@ namespace Emp.DataAccess.Data
                 );
 
             modelBuilder.Entity<EmployeeDetails>().HasData(
-                new EmployeeDetails { Id = 1, EmployeeCode = "22060023", FirstName = "Guna", LastName = "Varma",DepartmentId=1}
+                new EmployeeDetails { Id = 1, EmployeeCode = "22060023", FirstName = "Guna", LastName = "Varma",DepartmentId=1, ImageURL= ""}
                 );
 
             modelBuilder.Entity<Department>().HasData(

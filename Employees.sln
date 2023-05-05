@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Employees", "Employees\Employees.csproj", "{215104F0-320C-4E3E-9288-4250A3B745A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Employees", "Employees\Employees.csproj", "{215104F0-320C-4E3E-9288-4250A3B745A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emp.Model", "Models\Emp.Model.csproj", "{53CD171F-C009-4E36-A97D-E8680B6F41DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emp.Model", "Models\Emp.Model.csproj", "{53CD171F-C009-4E36-A97D-E8680B6F41DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emp.DataAccess", "DataAccess\Emp.DataAccess.csproj", "{99D2F6A5-5DE7-4312-9E2C-38FA985CDCBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emp.DataAccess", "DataAccess\Emp.DataAccess.csproj", "{99D2F6A5-5DE7-4312-9E2C-38FA985CDCBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emp.Utility", "Emp.Utility\Emp.Utility.csproj", "{7A6CD3DB-AFA5-4EF7-ADD8-F43E54FF7546}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{99D2F6A5-5DE7-4312-9E2C-38FA985CDCBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99D2F6A5-5DE7-4312-9E2C-38FA985CDCBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99D2F6A5-5DE7-4312-9E2C-38FA985CDCBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A6CD3DB-AFA5-4EF7-ADD8-F43E54FF7546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A6CD3DB-AFA5-4EF7-ADD8-F43E54FF7546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A6CD3DB-AFA5-4EF7-ADD8-F43E54FF7546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A6CD3DB-AFA5-4EF7-ADD8-F43E54FF7546}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Emp.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230502123404_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20230504055803_first")]
+    partial class first
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,6 +108,10 @@ namespace Emp.DataAccess.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
 
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -126,6 +130,7 @@ namespace Emp.DataAccess.Migrations
                             DepartmentId = 1,
                             EmployeeCode = "22060023",
                             FirstName = "Guna",
+                            ImageURL = "",
                             LastName = "Varma"
                         });
                 });
@@ -161,13 +166,13 @@ namespace Emp.DataAccess.Migrations
 
             modelBuilder.Entity("Emp.Model.Models.BankDetails", b =>
                 {
-                    b.HasOne("Emp.Model.Models.EmployeeDetails", "employeeDetails")
+                    b.HasOne("Emp.Model.Models.EmployeeDetails", "EmployeeDetails")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("employeeDetails");
+                    b.Navigation("EmployeeDetails");
                 });
 
             modelBuilder.Entity("Emp.Model.Models.EmployeeDetails", b =>

@@ -1,10 +1,16 @@
 ﻿using Emp.DataAccess.Repository.IRepository;
 using Emp.Model.Models;
+using Emp.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Employees.Areas.Employees.Controllers
 {
     [Area("Employees")]
+    [Authorize(Roles = KEYS.Role_ADMIN)]
+
+
     public class ProjectController : Controller
     {
 

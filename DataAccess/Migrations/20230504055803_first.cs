@@ -6,7 +6,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Emp.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,7 +53,8 @@ namespace Emp.DataAccess.Migrations
                     FirstName = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
                     LastName = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: false),
                     EmployeeCode = table.Column<string>(type: "longtext", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    ImageURL = table.Column<string>(type: "longtext", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -102,8 +103,8 @@ namespace Emp.DataAccess.Migrations
 
             migrationBuilder.InsertData(
                 table: "employeeDetailsList",
-                columns: new[] { "Id", "DepartmentId", "EmployeeCode", "FirstName", "LastName" },
-                values: new object[] { 1, 1, "22060023", "Guna", "Varma" });
+                columns: new[] { "Id", "DepartmentId", "EmployeeCode", "FirstName", "ImageURL", "LastName" },
+                values: new object[] { 1, 1, "22060023", "Guna", "", "Varma" });
 
             migrationBuilder.InsertData(
                 table: "bankDetailsList",

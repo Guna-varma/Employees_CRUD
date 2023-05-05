@@ -37,6 +37,9 @@ namespace Emp.Model.Models
         [ValidateNever]
         public Department Department { get; set; }
 
+        [ValidateNever]
+        public string ImageURL { get; set; }
+
         //public List<EmployeeProject> EmployeeProjects { get; set; }
 
     }

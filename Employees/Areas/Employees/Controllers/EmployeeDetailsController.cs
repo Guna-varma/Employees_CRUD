@@ -1,104 +1,70 @@
 ﻿using Emp.DataAccess.Repository.IRepository;
 using Emp.Model.Models;
 using Emp.Model.ViewModels;
+using Emp.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 
 namespace Employees.Areas.Employees.Controllers
 {
     [Area("Employees")]
+    [Authorize(Roles = KEYS.Role_ADMIN)]
+
     public class EmployeeDetailsController : Controller
     {
 
         private readonly IUnitOfWork repo;
+        private readonly IWebHostEnvironment env;
 
-        public EmployeeDetailsController(IUnitOfWork empRepo)
+        public EmployeeDetailsController(IUnitOfWork empRepo, IWebHostEnvironment environment)
         {
             repo = empRepo;
+            env = environment;
         }
 
         public IActionResult Index()
         {
-            List<EmployeeDetails> categories = repo.employeeDetails.GetAll(includeProperties:"Department").ToList();
+            List<EmployeeDetails> employeeDetails = repo.employeeDetails.GetAll(includeProperties:"Department").ToList();
 
-            return View(categories);
+            return View(employeeDetails);
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            EmpDetailsVM empVM = new()
-            {
-                DeptList = repo.department.GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.DepartmentName,
-                    Value = u.Id.ToString()
-                }),
-                EmployeeDetails = new EmployeeDetails()
-            };
-            return View(empVM);
+            List<EmployeeDetails> employeesList = repo.employeeDetails.GetAll(includeProperties: "Department").ToList();
+
+            return Json(new { data = employeesList });
         }
 
-        [HttpPost]
-        public IActionResult Create(EmpDetailsVM empVM)
+        [HttpDelete]
+        public IActionResult Delete(int? id)
         {
+            var employeeToBeDeleted = repo.employeeDetails.Get(u => u.Id == id);
+            if (employeeToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "Error While Deleting" });
+            }
 
-            if (ModelState.IsValid) //validations
+            //delete old image path
+            var oldImagePath =
+                Path.Combine(env.WebRootPath, employeeToBeDeleted.ImageURL.TrimStart('\\'));
+
+            if (System.IO.File.Exists(oldImagePath))
             {
-                repo.employeeDetails.Add(empVM.EmployeeDetails); // add emp 
-                repo.Save(); //save
-                TempData["success"] = "Product Created Successfully!";
-                return RedirectToAction("Index"); // add the data into db
+                System.IO.File.Delete(oldImagePath);
             }
-            else
-            {
-                empVM.DeptList = repo.department.GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.DepartmentName,
-                    Value = u.Id.ToString()
-                });
-                return View(empVM);
-            }
+
+            repo.employeeDetails.Remove(employeeToBeDeleted);
+            repo.Save();
+
+            return Json(new { success = true, message = "Deleted Successfully!" });
         }
 
-        public IActionResult Edit(int? id)
-        {
-            EmpDetailsVM empEditVM = new()
-            {
-                DeptList = repo.department.GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.DepartmentName,
-                    Value = u.Id.ToString()
-                }),
-                EmployeeDetails = new EmployeeDetails()
-            };
 
-            empEditVM.EmployeeDetails = repo.employeeDetails.Get(u => u.Id == id);
-            return View(empEditVM);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(EmpDetailsVM empEditVM)
-        {
-            if (ModelState.IsValid) //validations
-            {
-                repo.employeeDetails.Update(empEditVM.EmployeeDetails); // edit Employee 
-                repo.Save(); //save
-                TempData["success"] = "Product Updated Successfully!";
-                return RedirectToAction("Index"); // add the data into db
-            }
-            else
-            {
-                empEditVM.DeptList = repo.department.GetAll().Select(u => new SelectListItem
-                {
-                    Text = u.DepartmentName,
-                    Value = u.Id.ToString()
-                });
-                return View(empEditVM);
-            }
-        }
-
-        /* public IActionResult Create()
-
+        public IActionResult Upsert(int? id)  // combining of 'Update' and 'Insert'.
         {
             EmpDetailsVM empDetailsVM = new()
             {
@@ -109,20 +75,76 @@ namespace Employees.Areas.Employees.Controllers
                 }),
                 EmployeeDetails = new EmployeeDetails()
             };
-
-            return View();
+            if (id == null || id == 0)
+            {
+                //create
+                return View(empDetailsVM);
+            }
+            else
+            {
+                //update
+                empDetailsVM.EmployeeDetails = repo.employeeDetails.Get(u => u.Id == id);
+                return View(empDetailsVM);
+            }
         }
 
+
         [HttpPost]
-        public IActionResult Create(EmpDetailsVM empDetailsVM)
+        public IActionResult Upsert(EmpDetailsVM empDetailsVM, IFormFile? file)
         {
 
             if (ModelState.IsValid) //validations
             {
-                repo.employeeDetails.Add(empDetailsVM.EmployeeDetails); // add EmployeeDetails 
-                repo.Save(); //save
-                TempData["success"] = "EmployeeDetails Created Successfully!";
+                string wweRootPath = env.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string empFilePath = Path.Combine(wweRootPath, @"images\employeeDetails\");
+
+                    if (!string.IsNullOrEmpty(empDetailsVM.EmployeeDetails.ImageURL))
+                    {
+                        //delete old image path
+                        var oldImagePath =
+                            Path.Combine(wweRootPath, empDetailsVM.EmployeeDetails.ImageURL.TrimStart('\\'));
+                        //String str = oldImagePath;
+
+                        //char[] spearator = { '/' };
+                        //Int32 count = 5;
+
+                        //// Using the Method
+                        //String[] strlist = str.Split(spearator,
+                        //       count, StringSplitOptions.None);
+
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(empFilePath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    empDetailsVM.EmployeeDetails.ImageURL = @"\images\employeeDetails\" + fileName;
+                }
+                if (empDetailsVM.EmployeeDetails.Id == null || empDetailsVM.EmployeeDetails.Id == 0)
+                {
+                    repo.employeeDetails.Add(empDetailsVM.EmployeeDetails); // add Product 
+
+                    repo.Save(); //save
+                    TempData["success"] = "Employee Created Successfully!";
+                }
+                else
+                {
+                    repo.employeeDetails.Update(empDetailsVM.EmployeeDetails); // add Product 
+
+                    repo.Save(); //save
+                    TempData["success"] = "Employee Updated Successfully!";
+                }
+
                 return RedirectToAction("Index"); // add the data into db
+
             }
             else
             {
@@ -133,64 +155,6 @@ namespace Employees.Areas.Employees.Controllers
                 });
                 return View(empDetailsVM);
             }
-
-        } */
-
-        /*  public IActionResult Edit(int? id)
-         {
-             if (id == null | id <= 0)
-             {
-                 return NotFound("No Id is found");
-             }
-             EmployeeDetails EmployeeDetailsFromDb = repo.employeeDetails.Get(u => u.Id == id);
-             if (EmployeeDetailsFromDb == null)
-             {
-                 return NotFound("id: " + id + ", is not found!");
-             }
-             return View(EmployeeDetailsFromDb);
-         }
-
-         [HttpPost]
-         public IActionResult Edit(EmployeeDetails EmployeeDetails)
-         {
-             if (ModelState.IsValid) //validations
-             {
-                 repo.employeeDetails.Update(EmployeeDetails);// add EmployeeDetails 
-                 repo.Save(); //save
-                 TempData["success"] = "EmployeeDetails Updated Successfully!";
-
-                 return RedirectToAction("Index"); // add the data into db
-             }
-             return View();
-         } */
-
-        public IActionResult Delete(int? id)
-        {
-            if (id == null | id <= 0)
-            {
-                return NotFound("No Id is found");
-            }
-            EmployeeDetails EmployeeDetailsFromDb = repo.employeeDetails.Get(u => u.Id == id);
-            if (EmployeeDetailsFromDb == null)
-            {
-                return NotFound("id: " + id + ", is not found!");
-            }
-            return View(EmployeeDetailsFromDb);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int? id)
-        {
-            EmployeeDetails? obj = repo.employeeDetails.Get(u => u.Id == id);
-            if (obj == null)
-            {
-                return NotFound("Id:" + id + ", is not Found");
-            }
-            repo.employeeDetails.Remove(obj);
-            repo.Save();  //save
-            TempData["success"] = "EmployeeDetails Deleted Successfully!";
-
-            return RedirectToAction("Index");
         }
     }
 }

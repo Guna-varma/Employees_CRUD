@@ -1,12 +1,15 @@
 ﻿using Emp.DataAccess.Repository.IRepository;
 using Emp.Model.Models;
 using Emp.Model.ViewModels;
+using Emp.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Employees.Areas.Employees.Controllers
 {
     [Area("Employees")]
+    [Authorize(Roles = KEYS.Role_ADMIN)]
     public class BankDetailsController : Controller
     {
 
