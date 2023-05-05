@@ -106,14 +106,6 @@ namespace Employees.Areas.Employees.Controllers
                         //delete old image path
                         var oldImagePath =
                             Path.Combine(wweRootPath, empDetailsVM.EmployeeDetails.ImageURL.TrimStart('\\'));
-                        //String str = oldImagePath;
-
-                        //char[] spearator = { '/' };
-                        //Int32 count = 5;
-
-                        //// Using the Method
-                        //String[] strlist = str.Split(spearator,
-                        //       count, StringSplitOptions.None);
 
                         if (System.IO.File.Exists(oldImagePath))
                         {
