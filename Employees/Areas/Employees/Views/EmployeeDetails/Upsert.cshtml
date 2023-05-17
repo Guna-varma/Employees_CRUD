@@ -42,11 +42,49 @@
                         </div>
 
                         <div class="form-floating py-2 col-12">
-                            <input type="file" name="file" class="form-control border-0 shadow"/>
+                            <input type="file" name="file" class="form-control border-0 shadow" onchange="validateFileExtension(this)" required />
                             <label asp-for="EmployeeDetails.ImageURL" class="ms-2">
                                 @Model.EmployeeDetails.ImageURL
                             </label>
                         </div>
+
+                        <script>
+                            function validateFileExtension(input) {
+                                var allowedExtensions = /(\.png|\.jpeg|\.jpg)$/i;
+                                var filePath = input.value;
+                                if (!allowedExtensions.exec(filePath)) {
+                                    alert('Invalid file type. Please insert a .png or .jpg file.');
+                                    input.value = '';
+                                    return false;
+                                }
+                            }
+                        </script>
+
+                        @*<div class="form-floating py-2 col-12">
+                        <input type="file" name="file" class="form-control border-0 shadow"/>
+                        <label asp-for="EmployeeDetails.ImageURL" class="ms-2">
+                        @Model.EmployeeDetails.ImageURL
+                        </label>
+                        </div>*@
+
+                        @*<div class="form-floating py-2 col-12">
+                        <input type="file" name="file" class="form-control border-0 shadow" onchange="validateFileExtension(this)" required />
+                        <label asp-for="EmployeeDetails.ImageURL" class="ms-2">
+                        @Model.EmployeeDetails.ImageURL
+                        </label>
+                        </div>
+
+                        <script>
+                        function validateFileExtension(input) {
+                        var allowedExtensions = /(\.png|\.jpeg|\.jpg)$/i;
+                        var filePath = input.value;
+                        if (!allowedExtensions.exec(filePath)) {
+                        alert('Only .png, .jpeg, and .jpg files are allowed.');
+                        input.value = '';
+                        return false;
+                        }
+                        }
+                        </script>*@
 
                         <div class="form-floating py-2 col-12">
                             <select asp-for="@Model.EmployeeDetails.DepartmentId" asp-items="@Model.DeptList" class="form-select border-0 shadow">
@@ -86,8 +124,6 @@
         </form>
     </div>
 </div>
-
-
 
 @section Scripts{
     @{

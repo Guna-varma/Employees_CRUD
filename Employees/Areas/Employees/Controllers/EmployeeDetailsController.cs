@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Linq;
 
 namespace Employees.Areas.Employees.Controllers
 {
@@ -24,9 +27,96 @@ namespace Employees.Areas.Employees.Controllers
             env = environment;
         }
 
+
+        [HttpPost]
+        public IActionResult Upsert(EmpDetailsVM empDetailsVM, IFormFile? file)
+        {
+            if (ModelState.IsValid) //validations
+            {
+                string wweRootPath = env.WebRootPath;
+                if (file != null)
+                {
+                    // File type validation
+                    string[] allowedExtensions = { ".png", ".jpg", ".jpeg" };
+                    string fileExtension = Path.GetExtension(file.FileName).ToLower();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("File", "Only .png, .jpeg and .jpg files are allowed.");
+                        empDetailsVM.DeptList = repo.department.GetAll().Select(u => new SelectListItem
+                        {
+                            Text = u.DepartmentName,
+                            Value = u.Id.ToString()
+                        });
+                        return View(empDetailsVM);
+                    }
+
+                    // File size validation
+                    long maxFileSize = 5 * 1024 * 1024; // 5MB
+                    if (file.Length > maxFileSize)
+                    {
+                        ModelState.AddModelError("File", "File size must be less than 5MB.");
+                        empDetailsVM.DeptList = repo.department.GetAll().Select(u => new SelectListItem
+                        {
+                            Text = u.DepartmentName,
+                            Value = u.Id.ToString()
+                        });
+                        return View(empDetailsVM);
+                    }
+
+                    string fileName = Guid.NewGuid().ToString() + fileExtension;
+
+                    string empFilePath = Path.Combine(wweRootPath, @"images\employeeDetails\");
+
+                    if (!string.IsNullOrEmpty(empDetailsVM.EmployeeDetails.ImageURL))
+                    {
+                        //delete old image path
+                        var oldImagePath =
+                            Path.Combine(wweRootPath, empDetailsVM.EmployeeDetails.ImageURL.TrimStart('\\'));
+
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(empFilePath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    empDetailsVM.EmployeeDetails.ImageURL = @"\images\employeeDetails\" + fileName;
+                }
+                if (empDetailsVM.EmployeeDetails.Id == null || empDetailsVM.EmployeeDetails.Id == 0)
+                {
+                    repo.employeeDetails.Add(empDetailsVM.EmployeeDetails); // add Product 
+
+                    repo.Save(); //save
+                    TempData["success"] = "Employee Created Successfully!";
+                }
+                else
+                {
+                    repo.employeeDetails.Update(empDetailsVM.EmployeeDetails); // add Product 
+
+                    repo.Save(); //save
+                    TempData["success"] = "Employee Updated Successfully!";
+                }
+
+                return RedirectToAction("Index"); // add the data into db
+            }
+            else
+            {
+                empDetailsVM.DeptList = repo.department.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.DepartmentName,
+                    Value = u.Id.ToString()
+                });
+                return View(empDetailsVM);
+            }
+        }
+
         public IActionResult Index()
         {
-            List<EmployeeDetails> employeeDetails = repo.employeeDetails.GetAll(includeProperties:"Department").ToList();
+            List<EmployeeDetails> employeeDetails = repo.employeeDetails.GetAll(includeProperties: "Department").ToList();
 
             return View(employeeDetails);
         }
@@ -88,11 +178,11 @@ namespace Employees.Areas.Employees.Controllers
             }
         }
 
-
+        /*
+         
         [HttpPost]
         public IActionResult Upsert(EmpDetailsVM empDetailsVM, IFormFile? file)
         {
-
             if (ModelState.IsValid) //validations
             {
                 string wweRootPath = env.WebRootPath;
@@ -147,6 +237,8 @@ namespace Employees.Areas.Employees.Controllers
                 });
                 return View(empDetailsVM);
             }
-        }
+        } 
+        
+        */
     }
 }

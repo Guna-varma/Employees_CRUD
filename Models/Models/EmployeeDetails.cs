@@ -38,6 +38,8 @@ namespace Emp.Model.Models
         public Department Department { get; set; }
 
         [ValidateNever]
+        [Required]
+        [MaxLength(5 * 1024 * 1024, ErrorMessage = "The file size should not exceed 5MB.")]
         public string ImageURL { get; set; }
 
         //public List<EmployeeProject> EmployeeProjects { get; set; }

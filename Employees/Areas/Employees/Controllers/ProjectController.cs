@@ -10,7 +10,6 @@ namespace Employees.Areas.Employees.Controllers
     [Area("Employees")]
     [Authorize(Roles = KEYS.Role_ADMIN)]
 
-
     public class ProjectController : Controller
     {
 
